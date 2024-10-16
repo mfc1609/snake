@@ -14,7 +14,11 @@
 
 
 	main:
-		jal I_creer
+		#jal I_creer
+		li a0 0
+		li a1 0
+		jal I_coordToAdresse
+		
 		
 		
 	exit:
@@ -42,7 +46,7 @@
 		#prologue:
 		addi sp sp -4
 		sw ra (sp)
-		
+		#corps:
 		jal I_largeur
 		mv t1 a0
 		jal I_hauteur
@@ -55,7 +59,25 @@
 		lw ra (sp)
 		addi sp sp 4
 		jr ra
-	
+		
+		
+	I_coordToAdresse:
+		#prologue:
+		addi sp sp -4
+		sw ra 0(sp)
+		
+		#corps:
+		li t0 0x10010000
+		li t1 256
+		mul a1 a1 t1
+		add a0 a0 a1
+		slli a0 a0 2
+		add a0 a0 t0
+		
+		#épilogue
+		lw ra 0(sp)
+		addi sp sp 4
+		jr ra
 		
 
 			
