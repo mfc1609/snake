@@ -3,15 +3,29 @@
 	hauteur_pixel:	 .word 256
 	largeur_unit:    .word 8
 	hauteur_unit:	 .word 8
+
+	
+		
+			
 	
 .text
+
+
+
+
+	main:
+		jal I_creer
+		
+		
+	exit:
+		li a7 10
+		ecall
 	I_largeur:
 		la t0 largeur_pixel
 		lw t1, 0(t0)
 		la t2 largeur_unit
 		lw t3, 0(t2)
 		div a0 t1 t3
-		mv a0 t3
 		jr ra
 		
 		
@@ -21,16 +35,25 @@
 		la a3 hauteur_unit
 		lw a4, 0(a3)
 		div a0 a2 a4
-		mv a0 a4
 		jr ra
 	
 		
 	I_creer:
-		mul a5 t3 a4
-		slli a5 a5 2
-		mv a0 a5
+		#prologue:
+		addi sp sp -4
+		sw ra (sp)
+		
+		jal I_largeur
+		mv t1 a0
+		jal I_hauteur
+		mv t2 a0
+		mul a0 t1 t2
+		slli a0 a0 2
 		li a7 9
 		ecall
+		#épilogue:
+		lw ra (sp)
+		addi sp sp 4
 		jr ra
 	
 		
