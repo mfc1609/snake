@@ -15,8 +15,8 @@
 
 	main:
 		#jal I_creer
-		li a0 0
-		li a1 0
+		li a0 31
+		li a1 31
 		li a2 0x00ff0000
 		call I_plot
 		
@@ -71,10 +71,9 @@
 		
 		#corps:
 		li t0 0x10010000
-		li t1 64
-		li t2 2048
+		li t1 32
+		li t2 32
 		mul a1 a1 t2
-		mul a0 a0 t1
 		add a0 a0 a1
 		slli a0 a0 2
 		add a0 a0 t0
@@ -118,15 +117,8 @@
 		li t0 0
 		li t1 1
 		mv t2 a0
-		boucle: 
-		beq t0 t1 fin
-		sw a2 (t2)
-		addi t2 t2 4
-		addi t0 t0 1
-		j boucle
-		
+		sw a2 (t2)		
 		#épilogue:
-		fin:
 		j exit
 	
 			
