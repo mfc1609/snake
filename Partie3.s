@@ -17,7 +17,8 @@
 		#jal I_creer
 		li a0 0
 		li a1 0
-		jal I_coordToAdresse
+		li a2 0x00ff0000
+		call I_plot
 		
 		
 		
@@ -61,6 +62,8 @@
 		jr ra
 		
 		
+		
+
 	I_coordToAdresse:
 		#prologue:
 		addi sp sp -4
@@ -68,8 +71,10 @@
 		
 		#corps:
 		li t0 0x10010000
-		li t1 256
-		mul a1 a1 t1
+		li t1 64
+		li t2 2048
+		mul a1 a1 t2
+		mul a0 a0 t1
 		add a0 a0 a1
 		slli a0 a0 2
 		add a0 a0 t0
@@ -77,11 +82,52 @@
 		#épilogue
 		lw ra 0(sp)
 		addi sp sp 4
+		jr ra	
+		
+			
+	I_adresseToCoord:
+		#prologue:
+		addi sp sp -8
+		sw ra 0(sp)
+		sw s1 4(sp)
+			
+		#corps:
+		li t0 0x10010000
+		li t1 2048
+		li t2 64
+		sub a0 a0 t0
+		srli a0 a0 2
+		div a1 a0 t1
+		rem a2 a0 t1
+		div a0 a2 t2 
+		
+			
+		#épilogue:
+		lw ra 0(sp)
+		lw s1 4(sp)
+		addi sp sp 8								
 		jr ra
 		
-
-			
 		
+	I_plot:
+		#prologue:
+		
+		
+		#corps:
+		jal I_coordToAdresse
+		li t0 0
+		li t1 1
+		mv t2 a0
+		boucle: 
+		beq t0 t1 fin
+		sw a2 (t2)
+		addi t2 t2 4
+		addi t0 t0 1
+		j boucle
+		
+		#épilogue:
+		fin:
+		j exit
 	
 			
 		
