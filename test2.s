@@ -5,7 +5,6 @@
 	
 .text
 		li t0 0x10010000
-		li t1 0x10050000
 		li t2 0x00ff0000
 		mv t3, t0
 		li t4 0             	#ligne
