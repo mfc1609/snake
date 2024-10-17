@@ -15,11 +15,10 @@
 
 	main:
 		#jal I_creer
-		li a0 31
-		li a1 31
-		li a2 0x00ff0000
-		call I_plot
-		
+		#li a0 2
+		#li a1 2
+		#li a2 0x0000ff00
+		call O_creer
 		
 		
 	exit:
@@ -72,8 +71,7 @@
 		#corps:
 		li t0 0x10010000
 		li t1 32
-		li t2 32
-		mul a1 a1 t2
+		mul a1 a1 t1
 		add a0 a0 a1
 		slli a0 a0 2
 		add a0 a0 t0
@@ -92,13 +90,12 @@
 			
 		#corps:
 		li t0 0x10010000
-		li t1 2048
-		li t2 64
+		li t1 32
 		sub a0 a0 t0
 		srli a0 a0 2
-		div a1 a0 t1
-		rem a2 a0 t1
-		div a0 a2 t2 
+		rem a1 a0 t1
+		sub a2 a0 a1
+		div a0 a2 t1
 		
 			
 		#épilogue:
@@ -110,7 +107,8 @@
 		
 	I_plot:
 		#prologue:
-		
+		addi sp sp -4
+		sw ra 0(sp)
 		
 		#corps:
 		jal I_coordToAdresse
@@ -119,7 +117,31 @@
 		mv t2 a0
 		sw a2 (t2)		
 		#épilogue:
-		j exit
+		lw ra 0(sp)
+		addi sp sp 4
+		jr ra
+		
+		
+	O_creer:
+		#prologue:
+		
+		
+		#corps:
+		li a7 63
+		ecall
+		mv a0 t1
+		li a7 1
+		ecall
+		li a7 63
+		ecall
+		li a7 1
+		ecall
+		mv a0 a1
+		
+		
+		
+		
+		#épilogue:
 	
 			
 		
