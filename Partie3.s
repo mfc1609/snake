@@ -3,7 +3,6 @@
 	hauteur_pixel:	 .word 256
 	largeur_unit:    .word 8
 	hauteur_unit:	 .word 8
-	random_int:  .space 4
 
 	
 		
@@ -16,13 +15,19 @@
 
 	main:
 		#jal I_creer
-		li a0 6
+		#li a0 6
 		#li a1 2
 		#li a2 0x0000ff00
 		#li a0 31
 		#li a1 31
 		#jal I_coordToAdresse
+		li a0 8
+		#jal I_plot
 		jal O_creer
+		li a1 132
+		mv s7 a1
+		li a2 0x0000aaff
+		jal O_afficher
 		
 		
 	exit:
@@ -69,8 +74,11 @@
 
 	I_coordToAdresse:
 		#prologue:
-		addi sp sp -8
+		addi sp sp -12
 		sw ra 0(sp)
+		lw s1 4(sp)
+		lw s2 8(sp)
+		
 
 		
 		#corps:
@@ -84,7 +92,8 @@
 		#épilogue
 		lw ra 0(sp)
 		lw s1 4(sp)
-		addi sp sp 8
+		lw s2 8(sp)
+		addi sp sp 12
 		jr ra	
 		
 			
@@ -96,12 +105,14 @@
 			
 		#corps:
 		li t0 0x10010000
+		lw t4 (a0)
 		li t1 32
-		sub a0 a0 t0
-		srli a0 a0 2
-		rem a1 a0 t1
-		sub a2 a0 a1
-		div a0 a2 t1
+		sub t4 t4 t0
+		srli t4 t4 2
+		rem a1 t4 t1
+		sub a3 t4 a1
+		div t4 a3 t1
+		mv a0 t4 
 		
 			
 		#épilogue:
@@ -112,18 +123,18 @@
 		
 	I_plot:
 		#prologue:
-		addi sp sp -4
+		addi sp sp -8
 		sw ra 0(sp)
+		sw s1 4(sp)
 		
 		#corps:
 		jal I_coordToAdresse
-		li t0 0
-		li t1 1
-		mv t2 a0
-		sw a2 (t2)		
+		mv t6 a0
+		sw a2 0(t6)		
 		#épilogue:
 		lw ra 0(sp)
-		addi sp sp 4
+		lw s1 4(sp)
+		addi sp sp 8
 		jr ra
 		
 		
@@ -136,22 +147,24 @@
 			
 	O_creer:
 		#Prologue
+		addi sp sp -32
 		sw ra 0(sp)
 		sw s1 4(sp) 
 		sw s2 8(sp) 
 		sw s3 12(sp)  
 		sw s4 16(sp)   
 		sw s5 20(sp)  
-		sw s6 24(sp)              
+		sw s6 24(sp)     
+		sw s7 28(sp)         
 		
 		#Corps
 		
-		mv s6 a0                  
+		mv s6 a0           
 		
 		# Création du tableau
 		
 		li a1 136 
-		add a0 a0 a1 
+		add a0 s6 a1 
 		slli a0 a0 2 
 		li a7 9  
 		ecall   
@@ -213,44 +226,77 @@
 		boucle4:
 		li a0 31                     
 		li t2 31        
-		beq a6 t2, random 
+		beq a6 t2 fin_boucle4
 		jal I_coordToAdresse  
 		sw a0 0(s7)       
 		addi s7 s7 4    
 		addi a6 a6 1
 		mv a1 a6   
-		j boucle4                   
+		j boucle4    
 		
-		random:
-		li t0 28 
-		li t1 0   
+		                              
+		fin_boucle4:
 		li a5 0               
 		
 		boucle5:
+		li t0 28
 		beq a5 s6 epilogue 
+		random:
+		li a7 41    
+		ecall     
+		remu a0 a0 t0
+		addi a0 a0 2
+		mv a1 a0
+		abscisse:
 		li a7 41    
 		ecall
-		rem a0 a0 t0             
-		bge a0 t0 boucle5
-		blt a0 t1 boucle5
-		addi a0 a0 2             
+		remu a0 a0 t0
+		addi a0 a0 2
+		adresse:
+		jal I_coordToAdresse         
 		sw a0 0(s7)          
 		addi s7 s7 4       
 		addi a5 a5 1       
 		j boucle5                  
 		
 		epilogue:
+		li s8 0x10040000
+		mv a0 s8
 		lw ra 0(sp) 
 		lw s1 4(sp)
 		lw s2 8(sp)
 		lw s3 12(sp)  
 		lw s4 16(sp)  
 		lw s5 20(sp)
-		lw s6 24(sp)  
+		lw s6 24(sp) 
+		lw s7 28(sp) 
 		addi sp sp 32   
-		jr ra                   
+		jr ra  
 		
+		                 
+	O_afficher:
+		#prologue:
+		addi sp sp -12
+		sw ra 0(sp)
+		sw s1 4(sp)
+		sw s2 8(sp)
+				            
+		#corps:	
+		li a6 0
+		boucle_col:	   
+		beq a6 s7 epilogue1  
+		mv a0 s8     
+		jal I_adresseToCoord
+		jal I_plot
+		addi s8 s8 4
+		addi a6 a6 1
+		addi a0 a0 4
+		j boucle_col
 				
-		
-			
+		epilogue1:
+		lw ra 0(sp)
+		lw s1 4(sp)
+		lw s2 8(sp)
+		addi sp sp 12
+		jr ra
 		
