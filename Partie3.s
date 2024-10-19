@@ -24,10 +24,13 @@
 		li a0 8
 		#jal I_plot
 		jal O_creer
+		li a2 0x1001000c
 		li a1 132
-		mv s7 a1
-		li a2 0x0000aaff
-		jal O_afficher
+		#mv s7 a1
+		#li a2 0x0000aaff
+		#jal O_afficher
+		jal O_contient
+		
 		
 		
 	exit:
@@ -105,7 +108,6 @@
 			
 		#corps:
 		li t0 0x10010000
-		lw t4 (a0)
 		li t1 32
 		sub t4 t4 t0
 		srli t4 t4 2
@@ -285,12 +287,12 @@
 		li a6 0
 		boucle_col:	   
 		beq a6 s7 epilogue1  
-		mv a0 s8     
+		mv a0 s8
+		lw t4 (a0)     
 		jal I_adresseToCoord
 		jal I_plot
 		addi s8 s8 4
 		addi a6 a6 1
-		addi a0 a0 4
 		j boucle_col
 				
 		epilogue1:
@@ -299,4 +301,33 @@
 		lw s2 8(sp)
 		addi sp sp 12
 		jr ra
+		
+		
+	O_contient:
+		#prologue:
+		addi sp sp -4
+		sw ra 0(sp)
+		
+		#corps:
+		mv s9 a0
+		parcours_tab:
+		lw s10 (a0)
+		beq t0 a1 false
+		beq s10 a2 true
+		addi s9 s9 4
+		mv a0 s9
+		addi t0 t0 1 
+		j parcours_tab
+		
+		true:
+		li a0 1 
+		j epilogue2
+		
+		
+		false:
+		li a0 0
+		
+		epilogue2:
+		lw ra 0(sp)
+		addi sp sp 4
 		
