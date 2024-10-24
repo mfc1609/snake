@@ -8,6 +8,7 @@
 	ind_tete: 	.word 0
 	queue: 		.word 0
 	ind_queue: 	.word 0
+	nb_elems:	.word 0
 	max: 		.word 900
 		
 .text
@@ -21,11 +22,24 @@ main:
   	la t1, queue        
     	sw a0, 0(t1)
     	
-	li a1 10
+	li a1 2
+	jal F_enfiler
+	li a1 4
 	jal F_enfiler
 	jal F_enfiler
 	jal F_enfiler
-	jal F_defiler
+	jal F_enfiler
+	li a1 6
+	jal F_enfiler
+	jal F_enfiler
+	jal F_enfiler
+	jal F_enfiler
+	li a1 8
+	jal F_enfiler
+	#jal F_defiler
+	
+	li a1 7
+	jal F_valeurIndice
 	
 exit:
 	li a7 10
@@ -68,13 +82,18 @@ F_creer:
 	
 F_enfiler:
 	
+	addi sp sp -4
+	sw a0 (sp)
+	
 	la t0 tete
 	lw t1 0(t0)
 	
 	la t2 ind_tete
 	lw t3 0(t2)
 	
-	lw t4 max
+	
+	
+	lw t6 max
 	
 	# Ajoute le pixel 
 	sw a1 0(a0)
@@ -84,12 +103,19 @@ F_enfiler:
 	addi t1 t1 4
 	sw t1 (t0)
 	
-	#incr l'indice et attention a pas dépasser tab donc rem
+	#incr l'indice et attention a pas dépasser tab donc rem rappel mettre cond pour adresse aussi
 	addi t3 t3 1
-	rem t3 t3 t4
+	rem t3 t3 t6
 	sw t3 (t2)
 	
+	#incr elems
+	la t4 nb_elems
+	lw t5 0(t4)
+	addi t5 t5 1
+	sw t5 (t4)
 	
+	lw a0 (sp)
+	addi sp sp 4
 	
 	jr ra
 	
@@ -101,21 +127,67 @@ F_defiler:
 	la t2 ind_queue
 	lw t3 0(t2)
 	
-	lw t4 max
+	la t4 nb_elems
+	lw t5 0(t4)
+	
+	lw t6 max
 	
 	addi t1 t1 4
 	sw t1 (t0)
 	
 	addi t3 t3 1
-	rem t3 t3 t4
+	rem t3 t3 t6
 	sw t3 (t2)
 	
+	addi t5 t5 -1
+	sw t5 (t4)
+	
+	
 	jr ra
+
+F_valeurIndice:
+
+	la t1 nb_elems
+	lw t2 0(t1)
+	addi t3 t2 -1
+	
+	beqz a1 q
+	beq a1 t3 t
+	
+	la t4 queue
+	lw t5 (t4)
+	
+	la t6 ind_queue
+	lw t0 (t6)
+	
+	add t0 t0 a1
+	rem t0 t0 t2
+	
+	slli t0 t0 2
+	add t5 t5 t0
+	lw a0 (t5)
+	li a7 1
+	ecall
+	j exit_v
 	
 	
+	t:
+		
+		la t4 tete
+		lw t5 (t4)
+		addi t5 t5 -4
+		lw a0 (t5)
+		li a7 1
+		ecall
+		j exit_v
 	
+	q:
 	
-	
-	
-	
-	
+		la t4 queue
+		lw t5 (t4)
+		lw a0 (t5)
+		li a7 1
+		ecall
+
+	exit_v:
+		jr ra
