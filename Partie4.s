@@ -4,10 +4,12 @@
 	largeur_unit:    .word 8
 	hauteur_unit:	 .word 8
 	
-	tete: 	.word 0
-	queue: 	.word 0
-	max: 	.word 900
-	
+	tete: 		.word 0
+	ind_tete: 	.word 0
+	queue: 		.word 0
+	ind_queue: 	.word 0
+	max: 		.word 900
+		
 .text
 
 main:
@@ -68,15 +70,26 @@ F_enfiler:
 	
 	la t0 tete
 	lw t1 0(t0)
-	lw t2 max
+	
+	la t2 ind_tete
+	lw t3 0(t2)
+	
+	lw t4 max
 	
 	# Ajoute le pixel 
 	sw a1 0(a0)
 	addi a0 a0 4
 	
-	#incr
+	#incr l'adresse
 	addi t1 t1 4
 	sw t1 (t0)
+	
+	#incr l'indice et attention a pas dépasser tab donc rem
+	addi t3 t3 1
+	rem t3 t3 t4
+	sw t3 (t2)
+	
+	
 	
 	jr ra
 	
@@ -84,10 +97,18 @@ F_defiler:
 
 	la t0 queue
 	lw t1 0(t0)
-	lw t2 max
+	
+	la t2 ind_queue
+	lw t3 0(t2)
+	
+	lw t4 max
 	
 	addi t1 t1 4
 	sw t1 (t0)
+	
+	addi t3 t3 1
+	rem t3 t3 t4
+	sw t3 (t2)
 	
 	jr ra
 	
