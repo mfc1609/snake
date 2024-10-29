@@ -36,7 +36,9 @@ main:
 	jal F_enfiler
 	li a1 8
 	jal F_enfiler
-	#jal F_defiler
+	jal F_defiler
+	jal F_defiler
+	jal F_defiler
 	
 	li a1 0
 	jal F_valeurIndice
@@ -52,8 +54,12 @@ main:
 	li a1 13
 	jal F_valeurIndice
 	
+	
+	#test
 	addi a0 a0 400
 	jal F_contient
+	
+	jal F_lister
 	
 exit:
 	li a7 10
@@ -226,3 +232,31 @@ F_contient:
 		addi sp sp 4
 		lw a0 (sp)
 		jr ra
+
+F_lister:
+
+	addi sp sp -4
+	sw a0 (sp)
+
+	la t0 queue
+	lw t1 (t0)
+	
+	la t2 tete
+	lw t3 (t2)
+	
+	boucle_liste:
+	
+		bgt t1 t3 exit_lister
+		lw t4 (t1)
+		mv a0 t4
+		addi t1 t1 4
+		li a7 1
+		ecall
+		j boucle_liste
+	
+	exit_lister:
+		
+		lw a0 (sp)
+		addi sp sp 4
+		jr ra
+	
