@@ -38,8 +38,22 @@ main:
 	jal F_enfiler
 	#jal F_defiler
 	
-	li a1 7
+	li a1 0
 	jal F_valeurIndice
+	li a1 9
+	jal F_enfiler
+	jal F_enfiler
+	jal F_enfiler
+	jal F_enfiler
+	
+	li a1 12
+	jal F_valeurIndice
+	
+	li a1 13
+	jal F_valeurIndice
+	
+	addi a0 a0 400
+	jal F_contient
 	
 exit:
 	li a7 10
@@ -82,22 +96,16 @@ F_creer:
 	
 F_enfiler:
 	
-	addi sp sp -4
-	sw a0 (sp)
-	
 	la t0 tete
 	lw t1 0(t0)
 	
 	la t2 ind_tete
 	lw t3 0(t2)
 	
-	
-	
 	lw t6 max
 	
 	# Ajoute le pixel 
-	sw a1 0(a0)
-	addi a0 a0 4
+	sw a1 0(t1)
 	
 	#incr l'adresse
 	addi t1 t1 4
@@ -114,9 +122,6 @@ F_enfiler:
 	addi t5 t5 1
 	sw t5 (t4)
 	
-	lw a0 (sp)
-	addi sp sp 4
-	
 	jr ra
 	
 F_defiler:
@@ -127,9 +132,6 @@ F_defiler:
 	la t2 ind_queue
 	lw t3 0(t2)
 	
-	la t4 nb_elems
-	lw t5 0(t4)
-	
 	lw t6 max
 	
 	addi t1 t1 4
@@ -138,7 +140,9 @@ F_defiler:
 	addi t3 t3 1
 	rem t3 t3 t6
 	sw t3 (t2)
-	
+
+	la t4 nb_elems
+	lw t5 0(t4)
 	addi t5 t5 -1
 	sw t5 (t4)
 	
@@ -146,7 +150,10 @@ F_defiler:
 	jr ra
 
 F_valeurIndice:
-
+	
+	addi sp sp -4
+	sw a0 (sp)
+	
 	la t1 nb_elems
 	lw t2 0(t1)
 	addi t3 t2 -1
@@ -190,4 +197,32 @@ F_valeurIndice:
 		ecall
 
 	exit_v:
+		lw a0 (sp)
+		addi sp sp 4
+		jr ra
+
+F_contient:
+
+	lw t0 (a0)
+	
+	addi sp sp -4
+	sw a0 (sp)
+	
+	bgtz t0 app_s
+	
+	li a0 0
+	li a7 1
+	ecall
+	j exit_contient 
+	
+	app_s:
+		
+		li a0 1
+		li a7 1
+		ecall
+	
+	exit_contient:
+		
+		addi sp sp 4
+		lw a0 (sp)
 		jr ra
