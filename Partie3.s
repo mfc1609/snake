@@ -4,13 +4,11 @@
 	largeur_unit:    .word 8
 	hauteur_unit:	 .word 8
 	
-	nourriture_mange:  .asciz "Nourrriture mange!"
-	RetChar: .ascii "\n"
-	
 .text
 
 
 	main:
+		
 		#jal I_creer
 		#li a0 6
 		#li a1 2
@@ -26,27 +24,17 @@
 		li a2 0x0000aaff
 		jal O_afficher
 		#jal O_contient
-		jal niveau1
-		#li t1 500
-
-		
-		
-		#while: 
-		
-		#li a0 500 
-		#li a7 32 
-		#ecall 
-		
-		#jal niveau1
-		
-		#j while 
-		
 		
 		
 		
 	exit:
 		li a7 10
 		ecall
+		
+		
+		
+#############################################################################
+		
 		
 	I_largeur:
 		la t0 largeur_pixel
@@ -65,7 +53,10 @@
 		div a0 a2 a4
 		jr ra
 	
+
+#############################################################################
 		
+	
 	I_creer:
 		#prologue:
 		addi sp sp -4
@@ -85,7 +76,10 @@
 		jr ra
 		
 		
-		
+
+############################################################################		
+				
+								
 
 	I_coordToAdresse:
 		#prologue:
@@ -111,7 +105,12 @@
 		addi sp sp 12
 		jr ra	
 		
-			
+	
+
+############################################################################						
+					
+							
+											
 	I_adresseToCoord:
 		#prologue:
 		addi sp sp -8
@@ -132,7 +131,13 @@
 		lw ra 0(sp)
 		addi sp sp 8								
 		jr ra
+
 		
+				
+############################################################################						
+								
+										
+														
 		
 	I_plot:
 		#prologue:
@@ -153,7 +158,7 @@
 		
 	
 		
-
+############################################################################
 			
 			
 			
@@ -285,7 +290,13 @@
 		lw s7 28(sp) 
 		addi sp sp 32   
 		jr ra  
+
 		
+				
+############################################################################						
+								
+										
+														
 		                 
 	O_afficher:
 		#prologue:
@@ -314,7 +325,13 @@
 		lw s2 8(sp)
 		addi sp sp 12
 		jr ra
+
 		
+				
+############################################################################						
+								
+										
+														
 		
 	O_contient:
 		#prologue:
@@ -345,272 +362,10 @@
 		addi sp sp 4
 		jr ra
 		
-	nourriture:
-		#prologue:
-		addi sp sp -4
-		sw ra 0(sp)
-		#corps:
-		li t0 28
-		ordonne_nouriture:
-		li a7 41    
-		ecall     
-		remu a0 a0 t0
-		addi a0 a0 2
-		mv a1 a0
-		mv s5 a0
-		#abscisse_nouriture:
-		li a7 41    
-		ecall
-		remu a0 a0 t0
-		addi a0 a0 2
-		mv s6 a0
-		#adresse_nouriture:
-		jal I_coordToAdresse
-		mv t5 a0
-		mv a2 a0
-		li s8 0x10040000
-		mv a0 s8
-		li a1 132
-		jal O_contient
-		beqz a0 colorie_nouriture
-		j ordonne_nouriture
-		
-		colorie_nouriture:
-		mv a0 s6
-		mv a1 s5
-		li a2 0x00ff0000
-		jal I_plot
-		
-		#épilogue:
-		lw ra 0(sp)
-		addi sp sp 4
-		jr ra
-		
-		
-	snake:
-		#prologue:
-		addi sp sp -8
-		sw ra 0(sp)
-		sw s1 4(sp)
-		#corps:
-		li t0 28
-		ordonne_snake:
-		li a7 41    
-		ecall   
-		remu a0 a0 t0
-		addi a0 a0 2
-		beq a0 s5 ordonne_snake  
-		mv a1 a0
-		mv s3 a0
-		abscisse_snake:
-		li a7 41    
-		ecall
-		remu a0 a0 t0
-		addi a0 a0 2
-		mv s4 a0
-		adresse_snake:
-		jal I_coordToAdresse
-		mv t5 a0
-		mv a2 a0
-		li s8 0x10040000
-		mv a0 s8
-		li a1 132
-		jal O_contient
-		beqz a0 colorie_snake
-		j ordonne_snake
-		
-		colorie_snake:
-		mv a0 s4
-		mv a1 s3
-		li a2 0x0000ff00
-		jal I_plot
-		
-		#épilogue:
-		lw ra 0(sp)
-		lw s1 4(sp)
-		addi sp sp 8
-		jr ra
-		
-	niveau1:
-		#prologue:
-		addi sp sp -32
-		sw ra 0(sp)
-		sw s1 4(sp) 
-		sw s2 8(sp) 
-		sw s3 12(sp)  
-		sw s4 16(sp)   
-		sw s5 20(sp)  
-		sw s6 24(sp)     
-		sw s7 28(sp)   
-		
-		
-		#corps:
-		jal nourriture
-		jal snake
-		
-		li s7 0
-		avance_snake:
-		li t0 0
-		li t1 10000
-		li t4 0xffff0000
-		li t5 0xffff0004
+	
 		
 	
 		
-		premiere:
-		
-		beq s4 s6 continue3
-		
-		obstacle:
-		mv a0 s4
-		mv a1 s3
-		jal I_coordToAdresse
 		
 		
-		mv a2 a0 
-		li s8 0x10040000
-		mv a0 s8
-		li a1 132
-		jal O_contient
-		bgtz a0 exit
-		
-		
-		
-		
-		avance2:
-		lw t2 0(t4)
-		beqz t2 rien
-		lw t2 0(t5)
-		li t3 'd'
-		beq t2 t3 droite
-		li t3 'q'
-		beq t2 t3 gauche
-		li t3 'z'
-		beq t2 t3 haut
-		li t3 's'
-		beq t2 t3 bas
-		j rien
-		
-		
-		
-		droite:
-		mv a0 s4
-		mv a1 s3
-		li a2 0x00000000
-		jal I_plot
-		addi s4 s4 1
-		mv a0 s4
-		mv a1 s3
-		li a2 0x0000ff00
-		jal I_plot
-		li s7 'd'
-		j attendre
-		
-		
-		j premiere
-		
-		
-		gauche:
-		mv a0 s4
-		mv a1 s3
-		li a2 0x00000000
-		jal I_plot
-		addi s4 s4 -1
-		mv a0 s4
-		mv a1 s3
-		li a2 0x0000ff00
-		jal I_plot
-		li s7 'q'
-		j attendre
-		
-		j premiere
-		
-		
-		
-		
-		haut:
-		mv a0 s4
-		mv a1 s3
-		li a2 0x00000000
-		jal I_plot
-		addi s3 s3 -1
-		mv a0 s4
-		mv a1 s3
-		li a2 0x0000ff00
-		jal I_plot
-		li s7 'z'
-		j attendre
-		
-		j premiere
-		
-		
-		
-		
-		bas:
-		mv a0 s4
-		mv a1 s3
-		li a2 0x00000000
-		jal I_plot
-		addi s3 s3 1
-		mv a0 s4
-		mv a1 s3
-		li a2 0x0000ff00
-		jal I_plot
-		li s7 's'
-		j attendre
-		
-		j premiere
-		
-		
-		rien:
-		beqz s7 attendre
-		li t3 'd'
-	    beq s7 t3 droite
-	    li t3 'q'
-	    beq s7 t3 gauche
-	    li t3 'z'
-	    beq s7 t3 haut
-	    li t3 's'
-	    beq s7 t3 bas
-		
-		attendre:
-		mv a0 a1
-		li a7 32
-		ecall
-		j premiere
-		
-		
-		continue3:
-		beq s5 s3 nourriture2
-		j avance2
-		
-		nourriture2:
-		la a0 nourriture_mange
-		li a7 4
-		ecall
-		mv a0 s4
-		mv a1 s3
-		li a2 0x00000000
-		jal I_plot
-		mv s3 s5
-		mv s4 s6
-		mv a0 s4
-		mv a1 s3
-		li a2 0x0000ff00
-		jal I_plot
-		jal nourriture
-		j avance_snake
-		
-		
-		
-		epilogue3:
-		lw ra 0(sp) 
-		lw s1 4(sp)
-		lw s2 8(sp)
-		lw s3 12(sp)  
-		lw s4 16(sp)  
-		lw s5 20(sp)
-		lw s6 24(sp) 
-		lw s7 28(sp) 
-		addi sp sp 32   
-		jr ra
+						
