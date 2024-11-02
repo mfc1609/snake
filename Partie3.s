@@ -160,7 +160,7 @@
 		
 ############################################################################
 			
-			
+#On choisit d'utiliser les coordonnées, pour les manipuler plus facilement lorsqu'on on crée l'arène, et pour le déplacement du snake.			
 			
 			
 	O_creer:
