@@ -109,26 +109,33 @@ F_enfiler:
 	lw t3 0(t2)
 	
 	lw t6 max
-	
-	# Ajoute le pixel 
+	 
 	sw a1 0(t1)
 	
-	#incr l'adresse
 	addi t1 t1 4
 	sw t1 (t0)
 	
-	#incr l'indice et attention a pas dépasser tab donc rem rappel mettre cond pour adresse aussi
 	addi t3 t3 1
-	rem t3 t3 t6
-	sw t3 (t2)
+	bge t3 t6 reset_tete
 	
-	#incr elems
 	la t4 nb_elems
 	lw t5 0(t4)
 	addi t5 t5 1
 	sw t5 (t4)
 	
 	jr ra
+	
+	reset_tete:
+	
+		rem t3 t3 t6
+		sw t3 (t2)
+		sw a0 (t0)
+		la t4 nb_elems
+		lw t5 0(t4)
+		addi t5 t5 1
+		sw t5 (t4)
+		
+		jr ra
 	
 F_defiler:
 
@@ -144,16 +151,26 @@ F_defiler:
 	sw t1 (t0)
 	
 	addi t3 t3 1
-	rem t3 t3 t6
-	sw t3 (t2)
+	bge t3 t6 reset_queue
 
 	la t4 nb_elems
 	lw t5 0(t4)
 	addi t5 t5 -1
 	sw t5 (t4)
 	
-	
 	jr ra
+	
+	reset_queue:
+	
+		rem t3 t3 t6
+		sw t3 (t2)
+		sw a0 (t0)
+		la t4 nb_elems
+		lw t5 0(t4)
+		addi t5 t5 -1
+		sw t5 (t4)
+		
+		jr ra
 
 F_valeurIndice:
 	
