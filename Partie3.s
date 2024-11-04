@@ -199,7 +199,7 @@
 		
 		
 		
-		boucle1:
+		boucle1:						#Partie haut de l'image
 		beq a6 t2 fin_boucle1
 		jal I_coordToAdresse 
 		sw a0 0(s7) 
@@ -212,7 +212,7 @@
 		li a6 1
 		addi a1 a1 1
 		
-		boucle2:
+		boucle2:						#partie gauche de l'image
 		li a0 0 
 		beq a6 t2 fin_boucle2
 		jal I_coordToAdresse 
@@ -226,7 +226,7 @@
 		li a0 1
 		li a6 1
 		
-		boucle3:
+		boucle3:						#parie droite de l'image
 		
 		li a1 31                   
 		beq a6 t2 fin_boucle3   
@@ -241,7 +241,7 @@
 		li a6 1
 		li a1 1
 		
-		boucle4:
+		boucle4:						#partie bas de l'image
 		li a0 31                     
 		li t2 31        
 		beq a6 t2 fin_boucle4
@@ -256,7 +256,7 @@
 		fin_boucle4:
 		li a5 0               
 		
-		boucle5:
+		boucle5:						#obstacles à stocker dans le tableau
 		li t0 28
 		beq a5 s6 epilogue 
 		random:
